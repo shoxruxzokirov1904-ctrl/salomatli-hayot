@@ -7,32 +7,30 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # 1-MUHIM O'ZGARISH: ubuntu-latest o'rniga ubuntu-22.04 ishlatamiz.
+    # Ubuntu 24.04 da Python kompilyatsiyasi xato bermoqda.
+    runs-on: ubuntu-22.04
 
     steps:
-      # 1. Kodni yuklab olish
       - uses: actions/checkout@v4
 
-      # 2. Python 3.11 ni o'rnatish
+      # Keshni tozalash (oldini olamiz)
+      - name: Clean build cache
+        run: |
+          rm -rf .buildozer
+          rm -rf bin
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # 3. Java 17 (Temurin) ni o'rnatish
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 4. Eski build fayllarini tozalash (Xatolar qaytarilmasligi uchun)
-      - name: Clean previous builds
-        run: |
-          rm -rf .buildozer
-          rm -rf bin
-
-      # 5. Tizim kutubxonalarini o'rnatish (Eng muhim qadam)
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -70,21 +68,20 @@ jobs:
             zip \
             libltdl-dev
 
-      # 6. Buildozer va Cython ni o'rnatish
-      # DIQQAT: Kivy barqaror ishlashi uchun Cython 3.0 dan past bo'lishi kerak
-      - name: Install Buildozer and Cython
+      - name: Install Buildozer
         run: |
           pip install --upgrade pip
-          pip install buildozer
-          pip install "cython<3"
+          pip install buildozer cython==0.29.36
 
-      # 7. APK ni yig'ish
-      # "yes" komandasi barcha litsenziyalarni avtomatik qabul qiladi
       - name: Build APK with Buildozer
         run: |
+          # GitHubdagi tayyor NDKlar xalaqit bermasligi uchun ularni tozalaymiz
+          export ANDROID_HOME=""
+          export ANDROID_NDK_HOME=""
+          
+          # Buildni boshlaymiz (yes - litsenziyani qabul qilish uchun)
           yes | buildozer android debug
 
-      # 8. Tayyor APK ni yuklash
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
