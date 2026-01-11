@@ -10,63 +10,83 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      # 1. Kodni yuklab olish
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      # 2. Python 3.11 ni o'rnatish
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Set up Java (JDK 17)
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      # 3. Java 17 (Temurin) ni o'rnatish
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        # Buildozer uchun barcha zaruriy kutubxonalar
-        sudo apt-get install -y \
-          build-essential \
-          git \
-          python3-dev \
-          ffmpeg \
-          libsdl2-dev \
-          libsdl2-image-dev \
-          libsdl2-mixer-dev \
-          libsdl2-ttf-dev \
-          libportmidi-dev \
-          libswscale-dev \
-          libavformat-dev \
-          libavcodec-dev \
-          zlib1g-dev \
-          libgstreamer1.0 \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
-          libffi-dev \
-          libssl-dev \
-          autoconf \
-          automake \
-          libtool \
-          pkg-config \
-          cmake \
-          unzip \
-          zip
+      # 4. Eski build fayllarini tozalash (Xatolar qaytarilmasligi uchun)
+      - name: Clean previous builds
+        run: |
+          rm -rf .buildozer
+          rm -rf bin
 
-    - name: Install Python tools
-      run: |
-        pip install --upgrade pip
-        pip install buildozer cython==0.29.33 setuptools
+      # 5. Tizim kutubxonalarini o'rnatish (Eng muhim qadam)
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            zlib1g-dev \
+            libsqlite3-dev \
+            sqlite3 \
+            libbz2-dev \
+            libssl-dev \
+            openssl \
+            libgdbm-dev \
+            libgdbm-compat-dev \
+            liblzma-dev \
+            libreadline-dev \
+            libncursesw5-dev \
+            libffi-dev \
+            uuid-dev \
+            autoconf \
+            libtool \
+            automake \
+            pkg-config \
+            cmake \
+            unzip \
+            zip \
+            libltdl-dev
 
-    - name: Build APK with Buildozer
-      run: |
-        # BU YERDA ASOSIY O'ZGARISH:
-        # 'yes |' buyrug'i barcha litsenziyalarni avtomatik qabul qiladi
-        yes | buildozer android debug
+      # 6. Buildozer va Cython ni o'rnatish
+      # DIQQAT: Kivy barqaror ishlashi uchun Cython 3.0 dan past bo'lishi kerak
+      - name: Install Buildozer and Cython
+        run: |
+          pip install --upgrade pip
+          pip install buildozer
+          pip install "cython<3"
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: salomatli-hayot-apk
-        path: bin/*.apk
+      # 7. APK ni yig'ish
+      # "yes" komandasi barcha litsenziyalarni avtomatik qabul qiladi
+      - name: Build APK with Buildozer
+        run: |
+          yes | buildozer android debug
+
+      # 8. Tayyor APK ni yuklash
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: salomatli-hayot-apk
+          path: bin/*.apk
