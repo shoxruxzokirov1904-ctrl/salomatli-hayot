@@ -1,0 +1,467 @@
+# salomatlihayot.kv - Kivy dizayn fayli
+
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        # Header
+        BoxLayout:
+            size_hint_y: 0.1
+            canvas.before:
+                Color:
+                    rgba: 0.13, 0.59, 0.95, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                text: 'SALOMATLI HAYOT'
+                font_size: '24sp'
+                bold: True
+                color: 1, 1, 1, 1
+        
+        # Main content
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: 15
+            padding: 10
+            
+            # Qadam ko'rsatkichi
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: 0.4
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [15,]
+                
+                Widget:
+                    size_hint_y: 0.2
+                
+                Label:
+                    text: str(int(root.steps))
+                    font_size: '60sp'
+                    bold: True
+                    color: 0.13, 0.59, 0.95, 1
+                    size_hint_y: 0.5
+                
+                Label:
+                    text: 'QADAMLAR'
+                    font_size: '18sp'
+                    color: 0.5, 0.5, 0.5, 1
+                    size_hint_y: 0.3
+            
+            # Masofa va Kaloriya
+            BoxLayout:
+                size_hint_y: 0.2
+                spacing: 10
+                
+                BoxLayout:
+                    orientation: 'vertical'
+                    canvas.before:
+                        Color:
+                            rgba: 0.3, 0.69, 0.31, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    
+                    Label:
+                        text: f'{root.distance:.2f}'
+                        font_size: '28sp'
+                        bold: True
+                        color: 1, 1, 1, 1
+                    
+                    Label:
+                        text: 'Masofa (km)'
+                        font_size: '14sp'
+                        color: 1, 1, 1, 1
+                
+                BoxLayout:
+                    orientation: 'vertical'
+                    canvas.before:
+                        Color:
+                            rgba: 1, 0.6, 0, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    
+                    Label:
+                        text: str(int(root.calories))
+                        font_size: '28sp'
+                        bold: True
+                        color: 1, 1, 1, 1
+                    
+                    Label:
+                        text: 'Kaloriya'
+                        font_size: '14sp'
+                        color: 1, 1, 1, 1
+            
+            # Progress bar
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: 0.15
+                spacing: 5
+                
+                ProgressBar:
+                    max: 100
+                    value: root.progress
+                    size_hint_y: 0.4
+                
+                Label:
+                    text: f'Maqsad: {int(root.progress)}% bajarildi'
+                    font_size: '16sp'
+                    color: 0.3, 0.3, 0.3, 1
+                    size_hint_y: 0.6
+            
+            # Timer
+            Label:
+                text: root.timer_text
+                font_size: '32sp'
+                bold: True
+                color: 0.13, 0.59, 0.95, 1
+                size_hint_y: 0.1
+            
+            # Tugmalar
+            BoxLayout:
+                size_hint_y: 0.15
+                spacing: 10
+                
+                Button:
+                    text: 'To\'xtatish' if root.is_active else 'Boshlash'
+                    font_size: '18sp'
+                    bold: True
+                    background_color: (0.96, 0.26, 0.21, 1) if root.is_active else (0.3, 0.69, 0.31, 1)
+                    background_normal: ''
+                    on_press: root.toggle_workout()
+                
+                Button:
+                    text: 'Reset'
+                    font_size: '18sp'
+                    bold: True
+                    background_color: 0.5, 0.5, 0.5, 1
+                    background_normal: ''
+                    on_press: root.reset_data()
+        
+        # Navigation
+        BoxLayout:
+            size_hint_y: 0.08
+            spacing: 5
+            
+            Button:
+                text: 'Asosiy'
+                font_size: '14sp'
+                background_color: 0.13, 0.59, 0.95, 1
+                background_normal: ''
+            
+            Button:
+                text: 'Statistika'
+                font_size: '14sp'
+                background_color: 0.3, 0.3, 0.3, 1
+                background_normal: ''
+                on_press: app.root.current = 'stats'
+            
+            Button:
+                text: 'Profil'
+                font_size: '14sp'
+                background_color: 0.3, 0.3, 0.3, 1
+                background_normal: ''
+                on_press: app.root.current = 'profile'
+
+
+<StatisticsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        # Header
+        BoxLayout:
+            size_hint_y: 0.08
+            canvas.before:
+                Color:
+                    rgba: 0.3, 0.69, 0.31, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Button:
+                text: '<'
+                font_size: '24sp'
+                size_hint_x: 0.15
+                background_color: 0, 0, 0, 0
+                color: 1, 1, 1, 1
+                on_press: app.root.current = 'home'
+            
+            Label:
+                text: 'HAFTALIK STATISTIKA'
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+        
+        # Content
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 15
+                padding: 10
+                size_hint_y: None
+                height: self.minimum_height
+                
+                # Haftalik natijalar
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 200
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [15,]
+                    
+                    Label:
+                        text: '📊 Haftalik Natijalar'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.3
+                    
+                    Label:
+                        id: weekly_steps
+                        text: 'Jami qadamlar: 0'
+                        font_size: '16sp'
+                        color: 0.3, 0.3, 0.3, 1
+                        size_hint_y: 0.175
+                    
+                    Label:
+                        id: weekly_distance
+                        text: 'Jami masofa: 0 km'
+                        font_size: '16sp'
+                        color: 0.3, 0.3, 0.3, 1
+                        size_hint_y: 0.175
+                    
+                    Label:
+                        id: weekly_calories
+                        text: 'Jami kaloriya: 0 kcal'
+                        font_size: '16sp'
+                        color: 0.3, 0.3, 0.3, 1
+                        size_hint_y: 0.175
+                    
+                    Label:
+                        id: days_active
+                        text: 'Faol kunlar: 0/7'
+                        font_size: '16sp'
+                        color: 0.3, 0.3, 0.3, 1
+                        size_hint_y: 0.175
+                
+                # O'rtacha natijalar
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 120
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [15,]
+                    
+                    Label:
+                        text: '💡 O\'rtacha Natijalar'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.4
+                    
+                    Label:
+                        id: avg_steps
+                        text: 'O\'rtacha: 0 qadam/kun'
+                        font_size: '16sp'
+                        color: 0.3, 0.3, 0.3, 1
+                        size_hint_y: 0.6
+                
+                # Yutuqlar
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 180
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [15,]
+                    
+                    Label:
+                        text: '🏅 Yutuqlar'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.3
+                    
+                    Label:
+                        text: '🥇 Birinchi 10,000 qadam'
+                        font_size: '16sp'
+                        size_hint_y: 0.233
+                    
+                    Label:
+                        text: '🏆 7 kunlik ketma-ketlik'
+                        font_size: '16sp'
+                        size_hint_y: 0.233
+                    
+                    Label:
+                        text: '⭐ 100 km yurish'
+                        font_size: '16sp'
+                        size_hint_y: 0.234
+
+
+<ProfileScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        # Header
+        BoxLayout:
+            size_hint_y: 0.08
+            canvas.before:
+                Color:
+                    rgba: 1, 0.6, 0, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Button:
+                text: '<'
+                font_size: '24sp'
+                size_hint_x: 0.15
+                background_color: 0, 0, 0, 0
+                color: 1, 1, 1, 1
+                on_press: app.root.current = 'home'
+            
+            Label:
+                text: 'PROFIL'
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+        
+        # Content
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 10
+                padding: 15
+                size_hint_y: None
+                height: self.minimum_height
+                
+                Label:
+                    text: '👤'
+                    font_size: '60sp'
+                    size_hint_y: None
+                    height: 80
+                
+                # Form fields
+                Label:
+                    text: 'Ism:'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                    halign: 'left'
+                    text_size: self.size
+                
+                TextInput:
+                    id: name_input
+                    hint_text: 'Ismingizni kiriting'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 40
+                    multiline: False
+                
+                Label:
+                    text: 'Yosh:'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                    halign: 'left'
+                    text_size: self.size
+                
+                TextInput:
+                    id: age_input
+                    hint_text: 'Yoshingiz'
+                    input_filter: 'int'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 40
+                    multiline: False
+                
+                Label:
+                    text: 'Og\'irlik (kg):'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                    halign: 'left'
+                    text_size: self.size
+                
+                TextInput:
+                    id: weight_input
+                    hint_text: 'Og\'irligingiz'
+                    input_filter: 'int'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 40
+                    multiline: False
+                
+                Label:
+                    text: 'Bo\'y (cm):'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                    halign: 'left'
+                    text_size: self.size
+                
+                TextInput:
+                    id: height_input
+                    hint_text: 'Bo\'yingiz'
+                    input_filter: 'int'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 40
+                    multiline: False
+                
+                Label:
+                    text: 'Kunlik maqsad (qadam):'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                    halign: 'left'
+                    text_size: self.size
+                
+                TextInput:
+                    id: goal_input
+                    hint_text: 'Kunlik maqsad'
+                    input_filter: 'int'
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 40
+                    multiline: False
+                
+                Widget:
+                    size_hint_y: None
+                    height: 20
+                
+                Button:
+                    text: 'Saqlash'
+                    font_size: '18sp'
+                    bold: True
+                    size_hint_y: None
+                    height: 50
+                    background_color: 0.3, 0.69, 0.31, 1
+                    background_normal: ''
+                    on_press: root.save_profile()
